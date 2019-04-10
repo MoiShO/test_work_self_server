@@ -3,6 +3,7 @@ const Router = require('koa-router');
 const logger = require('koa-logger');
 const cors = require('@koa/cors');
 const koaBody = require('koa-body');
+const serve = require('koa-static');
 
 const err = require('./middleware/error');
 const rd = require('./controller/generator');
@@ -15,10 +16,11 @@ app.use(cors());
 app.use(err);
 app.use(logger());
 
-router.get('/', (ctx) => {
-  const message = 'Api start, all ok!';
-  ctx.body = message;
-});
+app.use(serve('./publick'));
+// router.get('/', (ctx) => {
+//   const message = (__dirname + '/publick/text');
+//   ctx.body = koaStatic()(message);
+// });
 
 router.get('/notes', async (ctx, next) => {
   let note = await db.getNotes();
