@@ -1,8 +1,8 @@
 const config = {
-    host: '10.2.7.132',
+    host: '10.2.7.121',
     port: '5432',
     user: 'postgres',
-    password: '',
+    password: '198919229Dust12',
     database: 'postgres',
     connectionLimit: 100,
 };
@@ -18,7 +18,7 @@ const initOptions = {
 
 const pgp = require('pg-promise')(initOptions);
 
-const db = pgp(`postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}?ssl=true`);
+const db = pgp(`postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`);
 
 db.connect()
     .then(obj => {

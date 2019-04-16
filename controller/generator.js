@@ -15,7 +15,7 @@ function getRandomInRange(min, max) {
 }
 
 module.exports = { 
-  getRandomData: getRandomData = (ctx) => {
+  getRandomData: (ctx) => {
     let rand_num;
     if(!ctx) {
       rand_num = getRandomInRange(1, 4)

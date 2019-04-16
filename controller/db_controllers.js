@@ -2,20 +2,20 @@ const db = require('../config/db');
 const moment = require('moment');
 
 
-module.exports =  db_contollers = {
+module.exports =  {
 
-  getNotes: getNotes = () => {
+  getNotes: () => {
     return db.any('SELECT id, title AS title FROM notes ORDER BY ID')
   },
 
-  getNote: getNote = (data) => {
+  getNote: (data) => {
     const { id } = data;
     return db.one('SELECT id, title AS title FROM notes WHERE id = ${id}', {
       id: id,
     })
   },
 
-  addNote: addNote = async (ctx) => {
+  addNote: async (ctx) => {
     try {
       const { title } = JSON.parse(ctx.request.body)
       await db.none('INSERT INTO notes (title) VALUES(${title})', {
@@ -32,7 +32,7 @@ module.exports =  db_contollers = {
     }
   },
 
-  delNote: delNote = (idData) => {
+  delNote: (idData) => {
     try {
       const { id } = idData
       return db.none('DELETE FROM notes WHERE id = ${id}', {
@@ -43,7 +43,7 @@ module.exports =  db_contollers = {
     }
   },
 
-  updateNote: updateNote = (ctx) => {
+  updateNote: (ctx) => {
     const { id } = ctx.params
     const { title } = JSON.parse(ctx.request.body)
     const date =  moment.utc().format("YYYY-MM-DD HH:mm:ss");

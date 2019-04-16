@@ -1,0 +1,13 @@
+doctype html
+html(lang="en")
+  head
+    title #{title}
+    meta(charset='utf-8')
+    link(rel='stylesheet', href='../public/css/style.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css')
+  body
+  .content
+    #app.wrap-inner !{content}
+    script.
+       window.__INITIAL_STATE__ = JSON.stringify(!{initialState})
+    script(type='text/javascript', src='../public/client.js')
