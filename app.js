@@ -5,33 +5,24 @@ const cors = require('@koa/cors');
 const koaBody = require('koa-body');
 const serve = require('koa-static');
 const compress = require('koa-compress')
+const Pug = require('koa-pug')
 
 const err = require('./middleware/error');
 const rd = require('./controller/generator');
 const db = require('./controller/db_controllers');
 
 const stores = require('./app/js/store/index');
-
-const Pug = require('koa-pug')
+const s = require('./app/index')
 
 const app = new Koa();
 const router = new Router();
 
-const s = require('./app/index')
-
-// app.use(compress({
-//   filter: function (content_type) {
-//      return /text/i.test(content_type)
-//   },
-//   threshold: 2048,
-//   flush: require('zlib').Z_SYNC_FLUSH
-// }));
 app.use(compress());
 app.use(cors());
-// app.use(err);
+app.use(err);
 app.use(logger());
 
-app.use(serve('./app'));
+app.use(serve('./public'));
 app.use(serve('.'));
 
 // router.get('/', async (ctx, next) =>{

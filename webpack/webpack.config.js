@@ -2,7 +2,7 @@ const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-  // Файл, с которого начинается клиентская часть Universal web app
+  // Файл, с которого начинается клиентская часть
   entry: {
     client: './ssr/client.js'
   },
