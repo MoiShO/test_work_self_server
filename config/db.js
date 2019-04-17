@@ -2,7 +2,7 @@ const config = {
     host: '10.2.7.121',
     port: '5432',
     user: 'postgres',
-    password: '198919229Dust12',
+    password: '',
     database: 'postgres',
     connectionLimit: 100,
 };
