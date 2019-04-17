@@ -1,10 +1,10 @@
 const config = {
-    host: '10.2.7.121',
-    port: '5432',
-    user: 'postgres',
-    password: '198919229Dust12',
-    database: 'postgres',
-    connectionLimit: 100,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    connectionLimit: process.env.DB_LIMIT,
 };
 
 const initOptions = {

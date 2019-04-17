@@ -8,17 +8,31 @@ import stores from '../../store';
 @inject('listStore', 'changeFormStore')
 @observer
 class ConnectedDetails extends Component {
+
+  componentDidMount () {
+    const { listStore, id } =  this.props;
+    if(!listStore.load){
+      listStore.allNotes();
+    }
+    listStore.getNoteById({id})
+  }
+
   render () {
     const { id, listStore, changeFormStore } = this.props
-    const note = listStore.list.filter((el) => { if (el.id == id) { return el } })[0]
+
+    const note = listStore.list_check
+
     return (
       <div>
         {Number(id) ===  Number(changeFormStore.change.id) ?
           <img src={Preloder} alt="loading..." /> : <h1>{note ? note.title : null}</h1>
         }
-        <ButtonDetails
+        {listStore.CheckHasErrored ?
+        <h1> Page not found </h1>
+        : <ButtonDetails
           id={id}
-        />
+          /> 
+        }
       </div>
     )
   }
@@ -36,7 +50,7 @@ ConnectedDetails.propTypes = {
     PropTypes.string
   ]),
   changeFormStore: mobxPropTypes.objectOrObservableObject,
-  listStore:mobxPropTypes.objectOrObservableObject,
+  listStore: mobxPropTypes.objectOrObservableObject,
 }
 
 export default ConnectedDetails

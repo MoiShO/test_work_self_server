@@ -7,6 +7,7 @@ import {Provider} from 'mobx-react';
 import App from '../app/App';
 import '../app/js/components/languages/i18n';
 import {syncHistoryWithStore } from 'mobx-react-router';
+// import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 if (process.env.NODE_ENV !== 'production') {
   const {whyDidYouUpdate} = require('why-did-you-update')

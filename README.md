@@ -113,7 +113,7 @@ main.js, main.css.
   ./ssr/template.pug
 ```
 
-Директорию с собраными  webpack'ом файлами указываем как статику
+Директорию с собраными  webpack'ом файлами указываем как статику на сервере
 ```sh
   const serve = require('koa-static');
   app.use(serve('./public'));
@@ -136,11 +136,59 @@ main.js, main.css.
 
 Или используя шаблонизатор pug 
 ```sh
-  const Pug = require('koa-pug')
-  const s = require('./app/index')
-  const stores = require('./app/js/store/index');
+  ./middleware/ssrRender.js
 
-  router.get('/', async (ctx, next) =>{
+  const Pug = require('koa-pug')
+  const s = require('../app/index')
+  const stores = require('../app/js/store/index');
+  const utilite = require('../utilites/extractorUrl')
+
+  module.exports = async (ctx, next) => {
+    if ((Number(utilite(ctx))) || (ctx.url === '/')) {
+      const pug = new Pug({ viewPath: './ssr/' })
+      const content =  s.serverPug(ctx)
+      const html = pug.render('template',
+      {
+        title: 'SSR',
+        content: content,
+        initialState: JSON.stringify(stores),
+      })
+      ctx.body = html
+    } else { 
+      await next()
+    }
+  }
+```
+
+Указываем разрешенные пути для получения ssr приложения
+```sh
+if ((Number(utilite(ctx))) || (ctx.url === '/')) {
+```
+
+Информация о клиенте в шаблон попадает из собраными  webpack'ом файлами.
+Подключили файлы webpack в template как скрипты.
+
+На сервере указываем пути для отображения приложения 
+```sh
+  ./app.js
+
+  router.get('*', ssr)
+```
+
+```sh
+  Что бы избавиться от
+  -if ((Number(utilite(ctx))) || (ctx.url === '/')) {-
+
+  пути можно указать на сервере
+  router.get('/', ssr)
+  router.get('/:id', ssr)
+
+  код изменится следующим образом
+  const Pug = require('koa-pug')
+  const s = require('../app/index')
+  const stores = require('../app/js/store/index');
+
+  module.exports = async (ctx, next) => {
     const pug = new Pug({ viewPath: './ssr/' })
     const content =  s.serverPug(ctx)
     const html = pug.render('template',
@@ -150,8 +198,6 @@ main.js, main.css.
       initialState: JSON.stringify(stores),
     })
     ctx.body = html
-  });
+    await next()
+  }
 ```
-
-Информация в шаблон попадает из собраными  webpack'ом файлами.
-Мы из подключиили в template как скрипты.

@@ -1,4 +1,4 @@
-import { observable, action} from 'mobx';
+import { observable, action } from 'mobx';
 import api from './api';
 
 export default class ListStore {
@@ -11,6 +11,11 @@ export default class ListStore {
   @observable arcticleHasErrored = false
 
   @observable list = [];
+
+  @observable list_check = [];
+
+  @observable CheckHasErrored = false
+
 
   @action.bound
   addListNewNote(data) {
@@ -56,6 +61,26 @@ export default class ListStore {
       .then((items)=> this.list = items)
       .catch(() => this.arcticleHasErrored = true)
     }
+  }
+
+  @action.bound
+  getNoteById(data) {
+    this.arcticleIsLoading = true
+
+      // const url = 'http://private-9aad-note10.apiary-mock.com/notes'
+    const url = `${api.getNoteById.endPoint}${data.id}`
+    return fetch(url).then((response) => {
+      if (!response.ok) {
+        throw Error(response.statusText)
+      }
+      this.arcticleIsLoading = false
+      this.CheckHasErrored = false
+  
+      return response
+    })
+    .then((response) => response.json())
+    .then((items) => this.list_check = items)
+    .catch(() => this.CheckHasErrored = true)
   }
 
   @action.bound

@@ -111,7 +111,7 @@ class ItemList extends React.Component {
             <li key={item.id} className="notes_list note">
               {title(item)}
               {button(item)}
-            </li> 
+            </li>
           )) : randomaizer()}
           {formStore.arcticleCreateLoading ? <img src={Preloder} alt="loading..." /> : null}
         </ul>
