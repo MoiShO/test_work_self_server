@@ -61,6 +61,9 @@
 # Необходимо сконфигурировать трансплайн для возможности работы сервера с import /exporеt
 
 ```sh
+
+  ./index.js                                                            // файл для запуска сервера с babel
+
   require("@babel/register")({                                          // регистрируюет плагины babel
     plugins: [
       "@babel/plugin-syntax-dynamic-import",                            // import/exporеt
@@ -73,6 +76,8 @@
 # Некоторые тонкости
 
 Файл для клиента никуда больше не импотрится, учавствует только в сборке приложения.
+ReactDOM.hydrate, а не ReactDOM.render на данныйм момент варнинг в консоли в 17 версии
+react от ReactDOM.render откажутся.
 ```sh
 webpack
   // Файл, с которого начинается клиентская часть
@@ -108,7 +113,7 @@ main.js, main.css.
   ./ssr/template.pug
 ```
 
-Директорию с файлами webpack указываем как статику
+Директорию с собраными  webpack'ом файлами указываем как статику
 ```sh
   const serve = require('koa-static');
   app.use(serve('./public'));
@@ -147,3 +152,6 @@ main.js, main.css.
     ctx.body = html
   });
 ```
+
+Информация в шаблон попадает из собраными  webpack'ом файлами.
+Мы из подключиили в template как скрипты.
