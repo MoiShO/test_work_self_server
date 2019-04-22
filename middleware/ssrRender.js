@@ -1,8 +1,7 @@
 const Pug = require('koa-pug');
-const mobx = require('mobx');
 
 const s = require('../ssr/index');
-const utilite = require('../utilites/extractorUrl');
+const u = require('../utilites/utils');
 const db = require('../controller/db_controllers');
 const RootStore = require('../src/js/store/rootStore').default
 
@@ -10,18 +9,18 @@ async function initialState(ctx) {
     const store = {}
     store.listStore = {}
     
-    store.listStore.list = mobx.toJS(await db.getNotes());
+    store.listStore.list = await db.getNotes();
+    store.listStore.CheckHasErrored =
+      (await db.getNote({id : u.extractorUrl(ctx) })).message ? true : false
 
-    Number(utilite(ctx))
-    ? store.listStore.list_check = mobx.toJS(await db.getNote({id : Number(utilite(ctx)) }))
+    Number(u.extractorUrl(ctx))
+    ? store.listStore.list_check = await db.getNote({id : Number(u.extractorUrl(ctx)) })
     : store.listStore.list_check = []
 
     return store;
 }
 
 module.exports = async (ctx, next) => {
-  if ((Number(utilite(ctx))) || (ctx.url === '/')) {
-
     const store = new RootStore(await initialState(ctx))
   
     ctx.mobx = {}
@@ -36,7 +35,5 @@ module.exports = async (ctx, next) => {
       initialState: JSON.stringify(ctx.mobx.store),
     })
     ctx.body = html
-  } else {
     await next()
-  }
 }

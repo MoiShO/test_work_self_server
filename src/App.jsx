@@ -7,6 +7,7 @@ import './App.css';
 import HomeComp from './Home';
 import Details from './Details';
 
+
 const App = () => {
   return (
     <div className="row">
@@ -14,7 +15,6 @@ const App = () => {
       <SwitchLanguage />
       <Switch>
         <Route exact path="/" component={HomeComp} />
-        <Route path="/:id" component={Details} />
         <Route path="/:id" component={Details} />
       </Switch>
     </div>

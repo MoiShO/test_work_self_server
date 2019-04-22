@@ -9,15 +9,13 @@ export default class ListStore {
 
   @observable arcticleIsLoading = false;
 
-  @observable arcticleHasErrored = false
+  @observable arcticleHasErrored = false;
 
-  constructor(list, list_check){
-    list? this.list = list : this.list = []
-    list_check? this.list_check = list_check : this.list_check = {}
+  constructor(list, list_check, CheckHasErrored){
+    list? this.list = list : this.list = [];
+    list_check? this.list_check = list_check : this.list_check = {};
+    this.CheckHasErrored = CheckHasErrored;
   }
-
-  @observable CheckHasErrored = false
-
 
   @action.bound
   addListNewNote(data) {

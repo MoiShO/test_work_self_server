@@ -8,11 +8,16 @@ module.exports =  {
     return db.any('SELECT id, title AS title FROM notes ORDER BY ID')
   },
 
-  getNote: (data) => {
-    const { id } = data;
-    return db.one('SELECT id, title AS title FROM notes WHERE id = ${id}', {
-      id: id,
-    })
+  getNote: async (data) => {
+    try {
+      const { id } = data;
+      const query =  db.one('SELECT id, title AS title FROM notes WHERE id = ${id}', {
+        id: id,
+      })
+      return await query
+    } catch(e) {
+      return {message: e.message}
+    }
   },
 
   addNote: async (ctx) => {
