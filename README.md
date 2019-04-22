@@ -78,7 +78,14 @@
 ```sh
   ./webpack/server.js
 
+  ...
+  const nodeExternals = require('webpack-node-externals')
+  ...
+
   entry: {'index.js': path.resolve(__dirname, './app.js')}              // прямой путь для запуска сервера
+  target: 'node',                                                       
+  externals: [nodeExternals()],                                         // не билдит node_module
+  ...
 ```
 В самом деле лишь, как альтернативный подход, каких либо видимых плюсов не увидел.
 Минусы - нельзя использовать в коде module.export и export default, вызывает жжение у node
@@ -180,20 +187,19 @@ main.js, main.css.
 
   const mobx = require('mobx');
 
-  const stores = require('../src/js/store/index').default;            // инициализация сторов
-  const ssr = require('../src/js/store/storeSSR').default;            // разворачивает стор с помощью mobx.toJS в json
   const db = require('../controller/db_controllers');                 // функции для работы с БД
 
   async function initialState(ctx) {
-      const store = ssr(stores);                                      // разворачивам стор в формате json
-      
-      store.listStore.list = mobx.toJS(await db.getNotes());          // добаляем стартовые состояние 
+    const store = {}
+    store.listStore = {}
+    
+    store.listStore.list = mobx.toJS(await db.getNotes());             // добаляем стартовые состояние 
 
-      Number(utilite(ctx))
-      ? store.listStore.list_check = mobx.toJS(await db.getNote({id : Number(utilite(ctx)) }))
-      : store.listStore.list_check = []
+    Number(utilite(ctx))
+    ? store.listStore.list_check = mobx.toJS(await db.getNote({id : Number(utilite(ctx)) }))
+    : store.listStore.list_check = []
 
-      return store;
+    return store;
   }
 ```
 
@@ -254,28 +260,4 @@ main.js, main.css.
     </Provider>,
     element
   );
-```
-
-(Находится на дорабтке)
-
-Далее в самом приложении мы НЕ (!) инициализируем сторы defaultProps.
-Или инициализировать store из window (? если возможно), то есть с состояним пришедшим с сервера.
-
-```sh
-  ./src/js/components/delButton/DelButton.jsx
-
-  DelButton.defaultProps = {
-    id: '',
-    delButtonStore: stores.delButtonStore,
-  };
-
-  DelButton.propTypes = {
-    id: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string
-    ]),
-    delButtonStore:  mobxPropTypes.objectOrObservableObject,
-    listStore: mobxPropTypes.objectOrObservableObject,
-    routing: mobxPropTypes.objectOrObservableObject,
-  }
 ```

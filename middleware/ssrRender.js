@@ -2,14 +2,13 @@ const Pug = require('koa-pug');
 const mobx = require('mobx');
 
 const s = require('../ssr/index');
-const stores = require('../src/js/store/index').default;
 const utilite = require('../utilites/extractorUrl');
-const ssr = require('../src/js/store/storeSSR').default;
 const db = require('../controller/db_controllers');
 const RootStore = require('../src/js/store/rootStore').default
 
 async function initialState(ctx) {
-    const store = ssr(stores);
+    const store = {}
+    store.listStore = {}
     
     store.listStore.list = mobx.toJS(await db.getNotes());
 

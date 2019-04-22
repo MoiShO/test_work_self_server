@@ -4,14 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r .env index.js",
-    "startDev": "npm run packDev && nodemon -r dotenv/config index.js",
-    "packDev": "webpack --hot --mode development --config ./webpack/webpack.config.js",
-    "loader": "nodemon -r dotenv/config index.js",
     "start": "npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --mode development --config ./webpack/webpack.config.js --watch",
-    "watch:server": "nodemon -r dotenv/config --delay 2.5 ./index.js"
+    "watch:server": "nodemon -r dotenv/config --delay 2.5 ./index.js",
+    "build:prod": "webpack --mode development --config ./webpack/webpack.config.js",
+    "start:prod": "npm run build:prod && node -r dotenv/config ./index.js"
   },
   "author": "",
   "license": "ISC",
