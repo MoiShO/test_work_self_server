@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 import React, { Component } from 'react'
 import i18next from 'i18next';
-import { inject, PropTypes as mobxPropTypes  } from 'mobx-react';
+import { inject, PropTypes as mobxPropTypes } from 'mobx-react';
 import PropTypes from 'prop-types';
 import Alert from '../alert/Alert';
 import stores from '../../store';
@@ -30,6 +30,7 @@ class ConnectedChangeForm extends Component {
     if (title) {
       updateShowForm()
       await changeFormStore.changeArticle({ title, id })
+      await listStore.getNoteById({ id })
       listStore.changeNote({ title, id })
     } else {
       this.setState({ message: true })
@@ -59,12 +60,11 @@ class ConnectedChangeForm extends Component {
   }
 }
 
-// ConnectedChangeForm.defaultProps = {
-//   id: '',
-//   changeFormStore: stores.changeFormStore,
-//   // listStore: stores.listStore,
-//   updateShowForm: (() => (undefined)),
-// };
+ConnectedChangeForm.defaultProps = {
+  id: '',
+  changeFormStore: stores.changeFormStore,
+  updateShowForm: (() => (undefined)),
+};
 
 ConnectedChangeForm.propTypes = {
   id: PropTypes.oneOfType([

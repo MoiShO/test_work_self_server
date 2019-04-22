@@ -30,7 +30,6 @@ class DelButton extends Component {
   handleShowForm() {
     const { showForm } = this.state;
     this.setState({showForm : !showForm})
-
   }
 
   async routeChange() {    
@@ -58,7 +57,6 @@ class DelButton extends Component {
 DelButton.defaultProps = {
   id: '',
   delButtonStore: stores.delButtonStore,
-  routing: stores.routing,
 };
 
 DelButton.propTypes = {

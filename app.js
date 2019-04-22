@@ -16,7 +16,7 @@ const router = new Router();
 
 app.use(compress());
 app.use(cors());
-// app.use(err);
+app.use(err);
 app.use(logger());
 
 app.use(serve('./public'));

@@ -11,7 +11,7 @@ const serverConfig = {
   },
   externals: [nodeExternals()],
   entry: {
-    'index.js': path.resolve(__dirname, '../index.js')
+    'index.js': path.resolve(__dirname, '../app.js')
   },
   resolve: {
     // Обработчики для разного типа расширений

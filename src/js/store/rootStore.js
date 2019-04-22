@@ -17,7 +17,7 @@ export default class RootStore {
     this.formStore = new FormStore(initialState.formStore),
     this.listStore = new ListStore(
         observable.array(initialState.listStore.list),
-        initialState.listStore.list_check
+        observable(initialState.listStore.list_check)
       )
   }
 }

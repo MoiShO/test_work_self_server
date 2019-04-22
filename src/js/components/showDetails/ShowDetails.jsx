@@ -11,11 +11,11 @@ class ConnectedDetails extends Component {
 
   render () {
     const { id, listStore, changeFormStore } = this.props
-
+    
     const note = listStore.list_check
     return (
       <div>
-        {Number(id) ===  Number(changeFormStore.change.id) ?
+        {(Number(id) ===  Number(changeFormStore.change.id)) || (listStore.arcticleIsLoading)?
           <img src={Preloder} alt="loading..." /> : <h1>{note ? note.title : null}</h1>
         }
         {listStore.CheckHasErrored ?

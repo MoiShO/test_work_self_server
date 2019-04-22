@@ -12,7 +12,7 @@
 >В ./config/db.js необходимо настроить подключение к БД
 
 ```sh
-> npm startDev
+> npm start
 ```
 
 
@@ -61,7 +61,6 @@
 # Необходимо сконфигурировать трансплайн для возможности работы сервера с import /exporеt
 
 ```sh
-
   ./index.js                                                            // файл для запуска сервера с babel
 
   require("@babel/register")({                                          // регистрируюет плагины babel
@@ -73,7 +72,63 @@
   });
   require("./app");                                                     // файл запуска сервера
 ```
+
+# Альтернативой подход к запуску сервера с require/import
+Конфингурация отдального webpack конфиг файла для сборки билда серверной части.
+```sh
+  ./webpack/server.js
+
+  entry: {'index.js': path.resolve(__dirname, './app.js')}              // прямой путь для запуска сервера
+```
+В самом деле лишь, как альтернативный подход, каких либо видимых плюсов не увидел.
+Минусы - нельзя использовать в коде module.export и export default, вызывает жжение у node
+в области пятой точки при поптыке запустить подобный билд.
+Соответственно не зыбваем понять в package.json расположение собранного билда.
+
+#Запуск webpack с --watch + nodemon development
+
+npm-run-all - позволяет парралельно запустить несколько процессов node.
+Нам нужен webpack и сам сервер с hotload.
+
+```sh
+
+  ./package.json 
+
+  "scripts": {
+    "start": "npm-run-all --parallel watch:server watch:build",
+    "watch:build": "webpack --mode development --config ./webpack/webpack.config.js --watch",
+    "watch:server": "nodemon -r dotenv/config --delay 2.5 ./index.js"
+  },
+```
+
+-r dotenv/config  помогает с .env файлом
+--delay 2.5 задержка перед перезагрузкой сервера, после изменений
+
+# Немного о webpack
+
+Нужно чистить периодическу папку с билдом от --watch файлов (после каждого ребилда)
+```sh
+  ... 
+  new CleanWebpackPlugin({
+    dry: true,
+    verbose: false,
+  }),
+  ...
+```
+
+Аналогично delay для nodemon
+```sh
+  ...
+  watchOptions: {
+    ignored: /node_modules/,
+    aggregateTimeout: 600,
+  },
+  ...
+```
+
 # Некоторые тонкости
+
+# Сервер
 
 Файл для клиента никуда больше не импотрится, учавствует только в сборке приложения.
 ReactDOM.hydrate, а не ReactDOM.render на данныйм момент варнинг в консоли в 17 версии
@@ -89,7 +144,7 @@ webpack
 У точки входа отсутствуют Provider и Router.
 По идее роутинг необходимо выносить в отдельный файл.
 ```sh
-  ./app/App.jsx
+  ./src/App.jsx
 ```
 
 Для клиента мы подключаем { Router } from 'react-router',
@@ -99,17 +154,13 @@ webpack
 
 Для сервера { StaticRouter } from 'react-router-dom'.
 ```sh
-  ./app/index.js
+  ./src/index.js
 ```
 
 В template добавляем хранилища и ссылки на файы которые генерит webpack.
 main.js, main.css.
 Серверную часть прогоняем через template получаем валидный HTML
 ```sh
-  ./ssr/template.js
-
-  или
-
   ./ssr/template.pug
 ```
 
@@ -123,81 +174,108 @@ main.js, main.css.
 ```sh
   app.use(serve('.'));
 ```
-
-Далее отдаем пользователю наш готовый HTML
-```sh
-  const stores = require('./app/js/store/index');
-  const s = require('./app/index')
-
-  router.get('/', async (ctx, next) =>{
-    ctx.body = await s.server(ctx, stores)
-  });
-```
-
-Или используя шаблонизатор pug 
+Для разворачивания state используем функцию
 ```sh
   ./middleware/ssrRender.js
 
-  const Pug = require('koa-pug')
-  const s = require('../app/index')
-  const stores = require('../app/js/store/index');
-  const utilite = require('../utilites/extractorUrl')
+  const mobx = require('mobx');
 
-  module.exports = async (ctx, next) => {
-    if ((Number(utilite(ctx))) || (ctx.url === '/')) {
+  const stores = require('../src/js/store/index').default;            // инициализация сторов
+  const ssr = require('../src/js/store/storeSSR').default;            // разворачивает стор с помощью mobx.toJS в json
+  const db = require('../controller/db_controllers');                 // функции для работы с БД
+
+  async function initialState(ctx) {
+      const store = ssr(stores);                                      // разворачивам стор в формате json
+      
+      store.listStore.list = mobx.toJS(await db.getNotes());          // добаляем стартовые состояние 
+
+      Number(utilite(ctx))
+      ? store.listStore.list_check = mobx.toJS(await db.getNote({id : Number(utilite(ctx)) }))
+      : store.listStore.list_check = []
+
+      return store;
+  }
+```
+
+Далее отдаем пользователю наш готовый HTML
+```sh
+
+  ./middleware/ssrRender.js
+
+  const Pug = require('koa-pug');
+  const mobx = require('mobx');
+  const stores = require('./src/js/store/index');
+  const s = require('./ssr/index')                                    // рендер сервесайд приложения
+  const RootStore = require('../src/js/store/rootStore').default      // инициализация сторов с состояниями
+  const utilite = require('../utilites/extractorUrl');
+
+  module.exports = async (ctx, next) => {                             // ctx - контекст 
+    if ((Number(utilite(ctx))) || (ctx.url === '/')) {                // проверка url
+
+      const store = new RootStore(await initialState(ctx))            // инициализируем стор с нужным состоянием
+    
+      ctx.mobx = {}
+      ctx.mobx.store = store                                          // инжектим стор в ctx
+
       const pug = new Pug({ viewPath: './ssr/' })
-      const content =  s.serverPug(ctx)
+      const content = await s.serverPug(ctx)
       const html = pug.render('template',
       {
         title: 'SSR',
         content: content,
-        initialState: JSON.stringify(stores),
+        initialState: JSON.stringify(ctx.mobx.store),
       })
-      ctx.body = html
-    } else { 
-      await next()
+      ctx.body = html                                                   // возвращаем отрендеренное приложени
+    } else {
+      await next()                                                      // возвращаем управление серверу если не те url
     }
-  }
 ```
 
-Указываем разрешенные пути для получения ssr приложения
+Ремарка по поводу урлов.
+По идее можно всегда отправлять запрос на '*' то есть любой урл будет автоматом
+рендерить приложение, то есть для различных 404.
+
+# Клиент
+
 ```sh
-if ((Number(utilite(ctx))) || (ctx.url === '/')) {
+  ./ssr/client.js
+
+  const rootStore = new RootStore(window.__INITIAL_STATE__);                // собираем стор из того же что у нас есть на сервере
+  const element = document.getElementById('app');
+
+  const browserHistory = createBrowserHistory();                            
+  const history = syncHistoryWithStore(browserHistory, rootStore.routing);  // из того же стора собираем и историю браузера
+
+  ReactDOM.hydrate(
+    <Provider {...rootStore}>
+      <Router history={history}>
+        <App />
+      </Router>
+    </Provider>,
+    element
+  );
 ```
 
-Информация о клиенте в шаблон попадает из собраными  webpack'ом файлами.
-Подключили файлы webpack в template как скрипты.
+(Находится на дорабтке)
 
-На сервере указываем пути для отображения приложения 
-```sh
-  ./app.js
-
-  router.get('*', ssr)
-```
+Далее в самом приложении мы НЕ (!) инициализируем сторы defaultProps.
+Или инициализировать store из window (? если возможно), то есть с состояним пришедшим с сервера.
 
 ```sh
-  Что бы избавиться от
-  -if ((Number(utilite(ctx))) || (ctx.url === '/')) {-
+  ./src/js/components/delButton/DelButton.jsx
 
-  пути можно указать на сервере
-  router.get('/', ssr)
-  router.get('/:id', ssr)
+  DelButton.defaultProps = {
+    id: '',
+    delButtonStore: stores.delButtonStore,
+  };
 
-  код изменится следующим образом
-  const Pug = require('koa-pug')
-  const s = require('../app/index')
-  const stores = require('../app/js/store/index');
-
-  module.exports = async (ctx, next) => {
-    const pug = new Pug({ viewPath: './ssr/' })
-    const content =  s.serverPug(ctx)
-    const html = pug.render('template',
-    {
-      title: 'SSR',
-      content: content,
-      initialState: JSON.stringify(stores),
-    })
-    ctx.body = html
-    await next()
+  DelButton.propTypes = {
+    id: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ]),
+    delButtonStore:  mobxPropTypes.objectOrObservableObject,
+    listStore: mobxPropTypes.objectOrObservableObject,
+    routing: mobxPropTypes.objectOrObservableObject,
   }
 ```

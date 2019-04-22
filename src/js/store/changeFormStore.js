@@ -5,8 +5,6 @@ export default class ChangeFormStore{
 
   @observable changeFormStoreErrored = false;
 
-  @observable noteIsDeleted = {};
-
   @observable show = false;
 
   @observable change = false;

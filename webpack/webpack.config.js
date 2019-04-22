@@ -2,6 +2,7 @@ const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const serveConf = require('./server')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 clientConf =  {
   mode: 'development',
@@ -56,7 +57,32 @@ clientConf =  {
     ]
   },
   watchOptions: {
-    ignored: /node_modules/
+    ignored: /node_modules/,
+    aggregateTimeout: 600,
+  },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+      cache: true,
+      parallel: true,
+      sourceMap: false,
+      extractComments: true,
+    })],
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendors: {
+          test: /node_modules/,
+          chunks: 'all',
+          reuseExistingChunk: true,
+        },
+        styles: {
+          test: /\.css$/,
+          chunks: 'all',
+          reuseExistingChunk: true,
+        }
+      }
+    }
   },
   stats: {
     // copied from `'minimal'`
@@ -73,7 +99,6 @@ clientConf =  {
   },
   target: 'web',
   plugins: [
-
   new ExtractTextPlugin({
     filename: './css/style.css',
     allChunks: true,

@@ -11,7 +11,7 @@
     "loader": "nodemon -r dotenv/config index.js",
     "start": "npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --mode development --config ./webpack/webpack.config.js --watch",
-    "watch:server": "nodemon -r dotenv/config ./index.js"
+    "watch:server": "nodemon -r dotenv/config --delay 2.5 ./index.js"
   },
   "author": "",
   "license": "ISC",
@@ -74,6 +74,7 @@
     "node-fetch": "^2.3.0",
     "npm-run-all": "^4.1.5",
     "style-loader": "^0.23.1",
+    "uglifyjs-webpack-plugin": "^2.1.2",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3",
     "webpack-node-externals": "^1.7.2"

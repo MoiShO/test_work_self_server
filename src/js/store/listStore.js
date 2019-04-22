@@ -13,7 +13,7 @@ export default class ListStore {
 
   constructor(list, list_check){
     list? this.list = list : this.list = []
-    list_check? this.list_check = list_check : this.list_check = []
+    list_check? this.list_check = list_check : this.list_check = {}
   }
 
   @observable CheckHasErrored = false
@@ -52,14 +52,13 @@ export default class ListStore {
       if (!response.ok) {
         throw Error(response.statusText)
       }
-      this.arcticleIsLoading = false
       this.CheckHasErrored = false
   
       return response
     })
     .then((response) => response.json())
-    .then((items) => this.list_check = items)
-    .catch(() => this.CheckHasErrored = true)
+    .then((items) => {this.list_check = observable(items); this.arcticleIsLoading = false})
+    .catch(() => {this.CheckHasErrored = true; this.arcticleIsLoading = false})
   }
 
   @action.bound

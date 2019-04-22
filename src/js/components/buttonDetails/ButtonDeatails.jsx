@@ -52,9 +52,7 @@ class ButtonDetails extends Component {
 
 ButtonDetails.defaultProps = {
   id: '',
-  routing: stores.routing,
   delButtonStore: stores.delButtonStore,
-  // listStore: stores.listStore,
 };
 
 ButtonDetails.propTypes = {
@@ -64,7 +62,7 @@ ButtonDetails.propTypes = {
   ]),
   routing: mobxPropTypes.objectOrObservableObject,
   delButtonStore: mobxPropTypes.objectOrObservableObject,
-  // listStore: mobxPropTypes.objectOrObservableObject,
+  listStore: mobxPropTypes.objectOrObservableObject,
 }
 
 
