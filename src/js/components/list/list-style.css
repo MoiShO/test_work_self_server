@@ -1,0 +1,23 @@
+.separator{
+    margin-top: 2px;
+    margin-bottom: 4px;
+    margin-left: -20px;
+    padding-left: 0;
+    padding-top: 0;
+}
+.note {
+    font-size: 18px;
+}
+
+.note {
+    margin: 0;
+    padding: 0;
+}
+.error {
+    font-size: 16px;
+    color: red;
+}
+.input_inline {
+    display: inline-flex;
+    max-width: 65%;
+}

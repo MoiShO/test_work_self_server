@@ -1,8 +1,14 @@
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const serveConf = require('./server')
 
-module.exports = {
+clientConf =  {
+  mode: 'development',
+  // webpack hot reloader
+  name: 'client',
   // Файл, с которого начинается клиентская часть
+  devtool: 'inline-source-map',
   entry: {
     client: './ssr/client.js'
   },
@@ -27,7 +33,7 @@ module.exports = {
     rules: [
       { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: "babel-loader" },
       {
-        test: /\.css$/,
+        test: /\.css$/, 
         use: ExtractTextPlugin.extract(
           {
             fallback: 'style-loader',
@@ -49,9 +55,35 @@ module.exports = {
       },
     ]
   },
+  watchOptions: {
+    ignored: /node_modules/
+  },
+  stats: {
+    // copied from `'minimal'`
+    all: false,
+    modules: true,
+    maxModules: 0,
+    errors: true,
+    warnings: true,
+    children: false,
+    timings: true,
+    // our additional options
+    moduleTrace: false,
+    errorDetails: true
+  },
   target: 'web',
   plugins: [
-  new ExtractTextPlugin({ filename: './css/style.css' }),
-  // new webpack.HotModuleReplacementPlugin(),
+
+  new ExtractTextPlugin({
+    filename: './css/style.css',
+    allChunks: true,
+    disable: false,
+  }),
+  new CleanWebpackPlugin({
+    dry: true,
+    verbose: false,
+  }),
   ]
 }
+
+module.exports = clientConf

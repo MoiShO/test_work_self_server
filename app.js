@@ -4,23 +4,24 @@ const logger = require('koa-logger');
 const cors = require('@koa/cors');
 const koaBody = require('koa-body');
 const serve = require('koa-static');
-const compress = require('koa-compress')
+const compress = require('koa-compress');
 
 const err = require('./middleware/error');
 const rd = require('./controller/generator');
 const db = require('./controller/db_controllers');
-const ssr = require('./middleware/ssrRender')
+const ssr = require('./middleware/ssrRender');
 
 const app = new Koa();
 const router = new Router();
 
 app.use(compress());
 app.use(cors());
-app.use(err);
+// app.use(err);
 app.use(logger());
 
 app.use(serve('./public'));
 app.use(serve('.'));
+
 router.get('*', ssr)
 
 router.get('/notes', async (ctx, next) => {

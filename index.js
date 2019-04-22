@@ -5,4 +5,5 @@ require("@babel/register")({
     "file-loader"
 ]
 });
+global.fetch = require("node-fetch");
 require("./app");
