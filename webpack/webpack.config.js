@@ -58,7 +58,7 @@ clientConf =  {
   },
   watchOptions: {
     ignored: /node_modules/,
-    aggregateTimeout: 600,
+    aggregateTimeout: 1600,
   },
   optimization: {
     minimizer: [

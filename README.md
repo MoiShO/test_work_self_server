@@ -185,21 +185,22 @@ main.js, main.css.
 ```sh
   ./middleware/ssrRender.js
 
-  const mobx = require('mobx');
-
   const db = require('../controller/db_controllers');                 // функции для работы с БД
+  const u = require('../utilites/utils');                             // утилиты
 
   async function initialState(ctx) {
-    const store = {}
-    store.listStore = {}
-    
-    store.listStore.list = mobx.toJS(await db.getNotes());             // добаляем стартовые состояние 
+      const store = {}
+      store.listStore = {}                                            // инициализируем поля для стора
+      
+      store.listStore.list = await db.getNotes();
+      store.listStore.CheckHasErrored =
+        (await db.getNote({id : u.extractorUrl(ctx) })).message ? true : false
 
-    Number(utilite(ctx))
-    ? store.listStore.list_check = mobx.toJS(await db.getNote({id : Number(utilite(ctx)) }))
-    : store.listStore.list_check = []
+      Number(u.extractorUrl(ctx))
+      ? store.listStore.list_check = await db.getNote({id : Number(u.extractorUrl(ctx)) })
+      : store.listStore.list_check = []
 
-    return store;
+      return store;                                                    // возвращаем поля стора с нужными значениями
   }
 ```
 
@@ -209,32 +210,26 @@ main.js, main.css.
   ./middleware/ssrRender.js
 
   const Pug = require('koa-pug');
-  const mobx = require('mobx');
-  const stores = require('./src/js/store/index');
   const s = require('./ssr/index')                                    // рендер сервесайд приложения
   const RootStore = require('../src/js/store/rootStore').default      // инициализация сторов с состояниями
-  const utilite = require('../utilites/extractorUrl');
 
-  module.exports = async (ctx, next) => {                             // ctx - контекст 
-    if ((Number(utilite(ctx))) || (ctx.url === '/')) {                // проверка url
-
-      const store = new RootStore(await initialState(ctx))            // инициализируем стор с нужным состоянием
+  module.exports = async (ctx, next) => {
+      const store = new RootStore(await initialState(ctx))            // собираем инициализированный стор
     
       ctx.mobx = {}
-      ctx.mobx.store = store                                          // инжектим стор в ctx
+      ctx.mobx.store = store                                         // передаем как значение для "контекста"
 
       const pug = new Pug({ viewPath: './ssr/' })
-      const content = await s.serverPug(ctx)
-      const html = pug.render('template',
+      const content = await s.serverPug(ctx)                         // собираем серверную часть
+      const html = pug.render('template',                            // передаем в шаблонизатор с нужными параметрами
       {
         title: 'SSR',
         content: content,
         initialState: JSON.stringify(ctx.mobx.store),
       })
-      ctx.body = html                                                   // возвращаем отрендеренное приложени
-    } else {
-      await next()                                                      // возвращаем управление серверу если не те url
-    }
+      ctx.body = html                                                 // возвращаем пользователю
+      await next()                                                    // отдаем управление серверу
+  }
 ```
 
 Ремарка по поводу урлов.
