@@ -60,8 +60,8 @@
 ```
 ## Необходимо сконфигурировать трансплайн для возможности работы сервера с import /exporеt
 
+> ./index.js                                                            // файл для запуска сервера с babel
 ```sh
-  > ./index.js                                                            // файл для запуска сервера с babel
 
   require("@babel/register")({                                          // регистрируюет плагины babel
     plugins: [
@@ -75,8 +75,9 @@
 
 ## Альтернативой подход к запуску сервера с require/import
 Конфингурация отдального webpack конфиг файла для сборки билда серверной части.
+
+> ./webpack/server.js
 ```sh
-  > ./webpack/server.js
 
   ...
   const nodeExternals = require('webpack-node-externals')
@@ -150,26 +151,26 @@ webpack
 
 У точки входа отсутствуют Provider и Router.
 По идее роутинг необходимо выносить в отдельный файл.
-```sh
-  > ./src/App.jsx
-```
+
+> ./src/App.jsx
+
 
 Для клиента мы подключаем { Router } from 'react-router',
-```sh
-  > ./ssr/client.js
-```
+
+> ./ssr/client.js
+
 
 Для сервера { StaticRouter } from 'react-router-dom'.
-```sh
-  > ./src/index.js
-```
+
+> ./src/index.js
+
 
 В template добавляем хранилища и ссылки на файы которые генерит webpack.
 main.js, main.css.
 Серверную часть прогоняем через template получаем валидный HTML
-```sh
-  > ./ssr/template.pug
-```
+
+> ./ssr/template.pug
+
 
 Директорию с собраными  webpack'ом файлами указываем как статику на сервере
 ```sh
@@ -182,8 +183,9 @@ main.js, main.css.
   app.use(serve('.'));
 ```
 Для разворачивания state используем функцию
+
+> ./middleware/ssrRender.js
 ```sh
-  > ./middleware/ssrRender.js
 
   const db = require('../controller/db_controllers');                 // функции для работы с БД
   const u = require('../utilites/utils');                             // утилиты
@@ -205,9 +207,9 @@ main.js, main.css.
 ```
 
 Далее отдаем пользователю наш готовый HTML
-```sh
 
-  > ./middleware/ssrRender.js
+> ./middleware/ssrRender.js
+```sh
 
   const Pug = require('koa-pug');
   const s = require('./ssr/index')                                    // рендер сервесайд приложения
@@ -238,8 +240,8 @@ main.js, main.css.
 
 ## Клиент
 
+> ./ssr/client.js
 ```sh
-  > ./ssr/client.js
 
   const rootStore = new RootStore(window.__INITIAL_STATE__);                // собираем стор из того же что у нас есть на сервере
   const element = document.getElementById('app');
