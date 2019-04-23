@@ -5,18 +5,16 @@ export default class ChangeFormStore{
 
   @observable changeFormStoreErrored = false;
 
-  @observable show = false;
-
   @observable change = false;
 
+  @observable changeList = []
+
   @action
-  changeArticle (data) {
+  changeArticle(data) {
 
     const url =  `${api.updateNoteById.endPoint}${data.id}`;
 
-    const set =  { change: true , id: data.id};
-
-    this.change = set;
+    this.change = { change: true , id: data.id};
   
     return fetch(url,
       {
@@ -28,11 +26,12 @@ export default class ChangeFormStore{
           throw Error(response.statusText);
         }
 
-        this.change = {change: false};
+        this.change = {change: false}
 
-        return response;
+        return response
       })
-    .then(() => {return (data)})
+    .then((response) => response.json())
+    .then((items) => {this.changeList = items})
     .catch(() => this.changeFormStoreErrored = true)
   }
 }

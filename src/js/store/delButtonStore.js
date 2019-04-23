@@ -16,10 +16,6 @@ export default class DelButtonStore {
     this.show = false;
   }
 
-  @computed get isOpen() {
-    return this.show;
-  }
-
   @action.bound
   showList() {
     this.show = !this.show;

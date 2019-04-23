@@ -11,7 +11,7 @@ class ConnectedDetails extends Component {
 
   render () {
     const { id, listStore, changeFormStore } = this.props
-    
+
     const note = listStore.list_check
     return (
       <div>
@@ -28,10 +28,6 @@ class ConnectedDetails extends Component {
     )
   }
 }
-
-ConnectedDetails.defaultProps = {
-  changeFormStore: stores.changeFormStore,
-};
 
 ConnectedDetails.propTypes = {
   id: PropTypes.oneOfType([

@@ -1,13 +1,11 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React from 'react';
 import { observer, inject, PropTypes as mobxPropTypes } from 'mobx-react';
-import {withRouter} from 'react-router'
 import i18next from 'i18next';
 
 import Button from '../delButton/index';
 import Preloder from '../../../preloader/25.gif';
 
-@withRouter
 @inject('listStore', 'formStore', 'delButtonStore', 'changeFormStore')
 @observer
 class ItemList extends React.Component {
@@ -76,7 +74,7 @@ class ItemList extends React.Component {
         </>
       )
     }
-    
+
     const randomaizer = () =>{
       return(
         <div className="data">

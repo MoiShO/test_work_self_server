@@ -7,12 +7,6 @@ export default class ButtonDetailsStore{
 
   @observable noteIsDeleted = {};
 
-  @observable show;
-
-  @computed get isOpen() {
-    return this.show;
-  }
-
   @action
   delArticle (data) {
     let set = { delete: true, id: data.id };
@@ -26,11 +20,8 @@ export default class ButtonDetailsStore{
         if (!response.ok) {
           throw Error(response.statusText);
         }
-
-        this.noteIsDeleted = { delete: false };
-        this.arcticleHasErrored = false;
       })
-    .then(() => this.delListNote(data))
+    .then(() => {this.delListNote(data);  this.noteIsDeleted = { delete: false };})
     .catch(() => this.DelButtonStoreErrored = true)
   }
 }

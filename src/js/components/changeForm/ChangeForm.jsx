@@ -4,9 +4,8 @@ import i18next from 'i18next';
 import { inject, PropTypes as mobxPropTypes } from 'mobx-react';
 import PropTypes from 'prop-types';
 import Alert from '../alert/Alert';
-import stores from '../../store';
 
-@inject('listStore', 'changeFormStore')
+@inject('listStore', 'changeFormStore', 'routing')
 class ConnectedChangeForm extends Component {
   constructor () {
     super()
@@ -25,12 +24,13 @@ class ConnectedChangeForm extends Component {
   async handleSubmit (event) {
     event.preventDefault()
 
-    const { id, changeFormStore, listStore, updateShowForm } = this.props
+    const { id, changeFormStore, listStore, updateShowForm, routing } = this.props
     const { title } = this.state
+
     if (title) {
       updateShowForm()
       await changeFormStore.changeArticle({ title, id })
-      await listStore.getNoteById({ id })
+      listStore.setListCheck(changeFormStore.changeList)
       listStore.changeNote({ title, id })
     } else {
       this.setState({ message: true })
@@ -59,12 +59,6 @@ class ConnectedChangeForm extends Component {
     )
   }
 }
-
-ConnectedChangeForm.defaultProps = {
-  id: '',
-  changeFormStore: stores.changeFormStore,
-  updateShowForm: (() => (undefined)),
-};
 
 ConnectedChangeForm.propTypes = {
   id: PropTypes.oneOfType([

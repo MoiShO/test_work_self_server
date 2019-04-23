@@ -17,10 +17,17 @@ export default class ListStore {
     this.CheckHasErrored = CheckHasErrored;
   }
 
-  @action.bound
-  addListNewNote(data) {
+  @action
+  addListNewNote = (data) => {
     this.arcticleIsLoading = true
     this.list = observable.array(this.list.concat(data[data.length-1]))
+    this.arcticleIsLoading = false
+  }
+
+  @action
+  setListCheck = (data) => {
+    this.arcticleIsLoading = true
+    this.list_check = data
     this.arcticleIsLoading = false
   }
 
@@ -50,13 +57,16 @@ export default class ListStore {
       if (!response.ok) {
         throw Error(response.statusText)
       }
-      this.CheckHasErrored = false
   
       return response
     })
     .then((response) => response.json())
-    .then((items) => {this.list_check = observable(items); this.arcticleIsLoading = false})
-    .catch(() => {this.CheckHasErrored = true; this.arcticleIsLoading = false})
+    .then((items) => {
+      this.list_check = observable(items);
+      this.arcticleIsLoading = false
+      this.CheckHasErrored = false
+    })
+    .catch(() => {this.CheckHasErrored = true})
   }
 
   @action.bound
@@ -70,13 +80,19 @@ export default class ListStore {
         if (!response.ok) {
           throw Error(response.statusText)
         }
-        this.arcticleIsLoading = false
+        
         this.arcticleHasErrored = false
   
         return response
       })
       .then((response) => response.json())
-      .then((items)=> this.list = observable.array(this.list.concat(items), { deep: false }))
-      .catch(() => this.arcticleHasErrored = true)
+      .then((items)=> {
+        this.list = observable.array(this.list.concat(items), { deep: false });
+        this.arcticleIsLoading = false;
+      })
+      .catch(() => {
+        this.arcticleHasErrored = true;
+        this.arcticleIsLoading = false;
+      })
   }
 }
