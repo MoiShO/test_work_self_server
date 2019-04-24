@@ -63,6 +63,7 @@ clientConf =  {
   optimization: {
     minimizer: [
       new UglifyJsPlugin({
+        test: /\.js(\?.*)?$/i,
         cache: true,
         parallel: true,
         sourceMap: false,
@@ -100,11 +101,7 @@ clientConf =  {
   },
   target: 'web',
   plugins: [
-    new CleanWebpackPlugin({
-        // dry: true,
-        verbose: false,
-        cleanStaleWebpackAssets: true
-    }),
+    new CleanWebpackPlugin(),
     new ExtractTextPlugin({
       filename: './style.css',
       allChunks: true,

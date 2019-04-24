@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm-run-all --parallel watch:server watch:build",
+    "start": "npm-run-all --parallel watch:build watch:server",
     "watch:build": "webpack --mode development --config ./webpack/webpack.config.js --watch",
     "watch:server": "nodemon -r dotenv/config --delay 2.5 ./index.js",
     "build:prod": "webpack --mode development --config ./webpack/webpack.config.js",
@@ -26,6 +26,7 @@
     "koa-pug": "^3.0.0-2",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
+    "koa-static-cache": "^5.1.2",
     "koa-views": "^6.2.0",
     "koa-views-render": "0.0.1",
     "mobx": "^5.9.4",

@@ -6,6 +6,8 @@ const koaBody = require('koa-body');
 const serve = require('koa-static');
 const compress = require('koa-compress');
 const views = require('koa-views')
+const staticCache = require('koa-static-cache');
+var path = require('path');
 
 const err = require('./middleware/error');
 const rd = require('./controller/generator');
@@ -19,6 +21,10 @@ app.use(compress());
 app.use(cors());
 app.use(err);
 app.use(logger());
+
+app.use(staticCache(path.join(__dirname, 'public'), {
+  maxAge: 60 * 24
+}))
 
 app.use(serve('./public'));
 app.use(serve('.'));
