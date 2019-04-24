@@ -5,6 +5,7 @@ const cors = require('@koa/cors');
 const koaBody = require('koa-body');
 const serve = require('koa-static');
 const compress = require('koa-compress');
+const views = require('koa-views')
 
 const err = require('./middleware/error');
 const rd = require('./controller/generator');
@@ -22,29 +23,40 @@ app.use(logger());
 app.use(serve('./public'));
 app.use(serve('.'));
 
-router.get('*', ssr)
+app.use(views(__dirname + '/documentation'));
 
-router.get('/notes', async (ctx, next) => {
-  let note = await db.getNotes(ctx);
-  ctx.body = note;
-});
+router
+      .get('*', ssr)
 
-router.get('/notes/:id', async (ctx, next) => {
-  let note = await db.getNote(ctx.params);
-  ctx.body = note;
-});
+      .get('/doc', async ctx => {
+            await ctx.render('output.html')
+        })
 
-router.get('/notes/random/:num', async (ctx, next) => {
-  ctx.body = rd.getRandomData(ctx.params);
-});
+      // .get('/docs', async ctx => {
+      //     await ctx.render('example.html')
+      //   })
 
-router.post('/notes', koaBody(), db.addNote);
+      .get('/notes', async ctx => {
+          let note = await db.getNotes(ctx);
+          ctx.body = note;
+        })
 
-router.delete('/notes/:id', async (ctx, next) => {
-  ctx.body = await db.delNote(ctx.params);
-});
+      .get('/notes/:id', async ctx => {
+          let note = await db.getNote(ctx.params);
+          ctx.body = note;
+        })
 
-router.put('/notes/:id', koaBody() , db.updateNote)
+      .get('/notes/random/:num', async ctx => {
+          ctx.body = rd.getRandomData(ctx.params);
+        })
+
+      .post('/notes', koaBody(), db.addNote)
+
+      .delete('/notes/:id', async ctx => {
+        ctx.body = await db.delNote(ctx.params);
+      })
+
+    .put('/notes/:id', koaBody() , db.updateNote);
 
 app.use(router.routes());
 app.use(router.allowedMethods());

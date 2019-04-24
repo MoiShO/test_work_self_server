@@ -1,0 +1,80 @@
+FORMAT: 1A
+
+HOST: http://localhost:3001
+
+#  Note API
+
+<img style="float: right;position: relative;bottom: 85px;">
+
+# Группа заметок
+
+## Запросы к /notes [/notes]
+
+### Получить все заметки (getNotes) [GET]
+
+
++ Response 200 (application/json)
+                [
+                  {
+                    "id": 1,
+                    "title": "Jogging in park"
+                  },
+                  {
+                    "id": 2,
+                    "title": "Pick-up posters from post-office"
+                  }
+              ]
+
+### Добавить заметку (addNote) [POST]
+
++ Parameters
+
+    + body: `{"title": "AABBCCDD."}` (required, json) - Название новой заявки
+
++ Request
+
+      {
+        "title": "AABBCCDD"
+      }
+
++ Response 200 (application/json)
+              {
+                "id": 3,
+                "title": "AABBCCDD"
+              }
+## Запросы с параметром /notes/:id [/notes/:id]
+
++ Parameters
+    + id: `10` (required, string) - номер заявки
+
+### Получить заметку (getNoteById) [GET]
+
++ Response 200 (application/json)
+                  {
+                    "id": 1,
+                    "title": "Jogging in park"
+                  }
+
++ Response 404 (application/json)
+  Page not found
+
+### Удалить заметку (delNoteById) [DELETE]
+
++ Response 204 (application/json)
+
+### Изменить заметку (updateNoteById) [PUT]
+
++ Parameters
+
+    + body: `{"title": "AABBCCDD."}` (required, json) - Новое название заявки
+
++ Request
+                  {
+                    "title": "AABBCCDD."
+                  }
+
++ Response 204 (application/json)
+                {
+                  "id": 2,
+                  "title": "Buy cheese and bread for breakfast"
+                }

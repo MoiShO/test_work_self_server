@@ -1,0 +1,3 @@
+raml2html --theme raml2html-slate-theme apiDoc.raml > index.html
+
+aglio -i aglio.apib --theme-template triple -o output.html

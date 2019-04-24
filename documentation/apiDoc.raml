@@ -1,0 +1,113 @@
+#%RAML 1.0
+---
+title: SSR
+baseUri: http://localhost:3001/
+version:
+protocols: [http, https]
+documentation
+    - title: Home
+        content: |
+                  API Test Documentation
+
+/notes:
+  get:
+    description: Получить все заметки (getNotes)
+    queryParameters:
+      None
+    responses:
+      500:
+      404:
+      200:
+        body:
+          application/json:
+            type: json
+            example: |
+                [{
+                  "id": 1,
+                  "title": "Jogging in park"
+                },
+                {
+                  "id": 2,
+                  "title": "Pick-up posters from post-office"
+                }]
+  post:
+    description: Добавить заметку (addNote)
+    body:
+      application/json:
+        type: |
+          {
+          "title": string
+          }
+        example: {"title": "AABBCCDD"}
+    responses:
+      500:
+      404:
+      200:
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "id": 3,
+                "title": "AABBCCDD"
+              }
+  /{NoteId}:
+    get:
+      description: Получить заметку (getNoteById)
+      queryParameters:
+        id:
+          displayName: id
+          type: string
+          description: Номер заявки
+          example: {"id": 12,}
+          required: true
+      responses:
+        500:
+        404:
+        200:
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                  "id": 12,
+                  "title": "Дайте еще"
+                }
+    delete:
+      description: Удалить заметку (delNoteById)
+      queryParameters:
+        id:
+          displayName: id
+          type: string
+          description: Номер заявки
+          example: {"id": 12,}
+          required: true
+      responses:
+        500:
+        404:
+        204:
+    put:
+      description: Изменить заметку (updateNoteById)
+      queryParameters:
+        id:
+          displayName: id
+          type: string
+          description: Номер заявки
+          example: {"id": 12,}
+          required: true
+      body:
+        application/json:
+          type: title
+          example: {"title": "Хочу назвать так."}
+      responses:
+        500:
+        404:
+        200:
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                  "id": 12,
+                  "title": "Хочу назвать так"
+                }

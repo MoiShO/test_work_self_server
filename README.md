@@ -16,6 +16,17 @@
 ```
 
 
+# Запуск Prod
+
+>В ./config/db.js необходимо настроить подключение к БД
+
+```sh
+> npm start:prod
+```
+
+билд лежит в папке
+> ./public
+
 ## Пресет babel для работы с react + mobx
 
 Зависимости типа react, mobx ставятся в dependencies
@@ -258,3 +269,9 @@ main.js, main.css.
     element
   );
 ```
+
+## Документация по работе с API
+
+> ./documentation/output.html
+
+при запущенном сервере находится по пути [protocol][host][port]/doc
