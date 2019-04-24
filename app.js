@@ -7,11 +7,12 @@ const serve = require('koa-static');
 const compress = require('koa-compress');
 const views = require('koa-views')
 const staticCache = require('koa-static-cache');
-var path = require('path');
+const path = require('path');
 
 const err = require('./middleware/error');
 const rd = require('./controller/generator');
 const db = require('./controller/db_controllers');
+// const db = require('./config/sqlLite/controller');
 const ssr = require('./middleware/ssrRender');
 
 const app = new Koa();
@@ -35,7 +36,7 @@ router
       .get('*', ssr)
 
       .get('/doc', async ctx => {
-            await ctx.render('output.html')
+          await ctx.render('output.html')
         })
 
       // .get('/docs', async ctx => {
@@ -62,7 +63,7 @@ router
         ctx.body = await db.delNote(ctx.params);
       })
 
-    .put('/notes/:id', koaBody() , db.updateNote);
+      .put('/notes/:id', koaBody() , db.updateNote);
 
 app.use(router.routes());
 app.use(router.allowedMethods());

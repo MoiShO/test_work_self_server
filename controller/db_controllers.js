@@ -1,8 +1,7 @@
 const db = require('../config/db');
 const moment = require('moment');
 
-
-module.exports =  {
+const postgres =  {
 
   getNotes: () => {
     return db.any('SELECT id, title AS title FROM notes ORDER BY ID')
@@ -61,3 +60,5 @@ module.exports =  {
     ctx.body = { id: id, title: title }
   }
 }
+
+module.exports = postgres

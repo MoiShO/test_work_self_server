@@ -15,13 +15,32 @@
 > npm start
 ```
 
+# Запуск Dev окружения без подключения к БД
+
+> ./middleware/ssrRender.js
+
+```sh
+  const db = require('../controller/db_controllers');                    // закоментировать
+  // const db = require('../config/sqlLite/controller');                 // раскоментировтаь
+```
+> ./app.js
+
+```sh
+  const db = require('../controller/db_controllers');                    // закоментировать
+  // const db = require('../config/sqlLite/controller');                 // раскоментировтаь
+```
+
+```sh
+> npm start
+```
+
 
 # Запуск Prod
 
 >В ./config/db.js необходимо настроить подключение к БД
 
 ```sh
-> npm start:prod
+> npm run start:prod
 ```
 
 билд лежит в папке
