@@ -5,6 +5,8 @@ const u = require('../utilites/utils');
 const db = require('../controller/db_controllers');
 const RootStore = require('../src/js/store/rootStore').default
 
+
+
 async function initialState(ctx) {
     const store = {}
     store.listStore = {}
@@ -22,7 +24,9 @@ async function initialState(ctx) {
 
 module.exports = async (ctx, next) => {
     const store = new RootStore(await initialState(ctx))
-  
+
+    const hash = await u.hash()
+
     ctx.mobx = {}
     ctx.mobx.store = store
 
@@ -33,6 +37,8 @@ module.exports = async (ctx, next) => {
       title: 'SSR',
       content: content,
       initialState: JSON.stringify(ctx.mobx.store),
+      hashClient: hash['client'],
+      hashClientChunck: hash['vendors~client']
     })
     ctx.body = html
     await next()

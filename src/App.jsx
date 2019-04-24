@@ -7,7 +7,6 @@ import './App.css';
 import HomeComp from './Home';
 import Details from './Details';
 
-
 const App = () => {
   return (
     <div className="row">

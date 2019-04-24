@@ -68,7 +68,6 @@ export default class ListStore {
     })
     .catch(() => {this.CheckHasErrored = true})
   }
-
   @action.bound
   randomNotes(data) {
       this.arcticleIsLoading = true

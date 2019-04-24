@@ -17,8 +17,8 @@ clientConf =  {
   output: {
     path: path.resolve(__dirname, '../public'),
     publicPath: '/',
-    chunkFilename: '[name].bundle.js',
-    filename: "[name].js"
+    chunkFilename: '[name]-[chunkhash:8].bundle.js',
+    filename: "[name]-[chunkhash:8].js"
   },
   resolve: {
     // Обработчики для разного типа расширений
@@ -63,11 +63,12 @@ clientConf =  {
   optimization: {
     minimizer: [
       new UglifyJsPlugin({
-      cache: true,
-      parallel: true,
-      sourceMap: false,
-      extractComments: true,
-    })],
+        cache: true,
+        parallel: true,
+        sourceMap: false,
+        extractComments: true,
+      })
+    ],
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
@@ -93,21 +94,22 @@ clientConf =  {
     warnings: true,
     children: false,
     timings: true,
-    // our additional options
+    // our additional optionsy
     moduleTrace: false,
     errorDetails: true
   },
   target: 'web',
   plugins: [
-  new ExtractTextPlugin({
-    filename: './css/style.css',
-    allChunks: true,
-    disable: false,
-  }),
-  new CleanWebpackPlugin({
-    dry: true,
-    verbose: false,
-  }),
+    new CleanWebpackPlugin({
+        // dry: true,
+        verbose: false,
+        cleanStaleWebpackAssets: true
+    }),
+    new ExtractTextPlugin({
+      filename: './style.css',
+      allChunks: true,
+      disable: false,
+    }),
   ]
 }
 
